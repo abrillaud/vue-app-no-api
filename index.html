@@ -62,7 +62,7 @@
     <h2>gestion du contrat de travail</h2>
 
     <div id="main" v-cloak>
-        <form>
+        <form v-on:submit.prevent="onSubmit">
             <div>Date de début :
                 <input type="date" v-model="dateDebut">
             </div>
@@ -113,10 +113,12 @@
                     const finContrat = moment(this.dateFin);
 
                     var dureeContrat = finContrat.diff(debutContrat, "days");
+                    return dureeContrat + " jours soit " + (dureeContrat * 24) + " heures."
 ;
                 },
                 Conges: function () {
                     var conges = Math.ceil((this.dureeContrat / 28) * 2.08);
+                    return conges + " jours";
                 },
             }
 
