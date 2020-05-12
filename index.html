@@ -12,57 +12,86 @@
         }
 
         body {
-            font: 20px/1.3 'Open Sans', sans-serif;
+            font: 20px/1.3 'Lucida Console';
             width: 100%;
-            color: #5e5b64;
+            color: #69607a;
             display: flex;
             align-items: center;
             flex-direction: column;
         }
 
-        h2 {
+        h1, h2 {
             text-decoration: underline;
         }
 
         #main {
-            border: 1px solid #000000;
+            border: 10px double #69607a;
             margin: auto;
             padding: 20px;
 
         }
+        form div{
+            text-align: left;
 
-        input[type=date] {
-            appearance: none;
-            -webkit-appearance: none;
-            color: #d8c070;
-            font-family: "Helvetica", arial, sans-serif;
+        }
+        form{
+            text-align: center;
+        }
+        input {
+            color: #e7c966;
+            font-family: "Lucida Console";
             font-size: 18px;
-            border: 1px solid #ecf0f1;
+            border: 0px solid #ffffff;
             padding: 5px;
-            display: inline-block !important;
-            visibility: visible !important;
+
         }
 
         input[type=number] {
             -moz-appearance: textfield;
-            color: #d8c070;
-            font-size: 18px;
-            border: 1px solid #ecf0f1;
-            padding: 5px;
-            width: 20px;
         }
+
         .resultat {
             margin-top: 50px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 0.5em 3em;
+            border: 0.16em solid #FFFFFF;
+            margin-left: 50%;
+            margin: 0 0.3em 0.3em 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-family: "Lucida Console";
+            border-radius: 40%;
+            font-weight: 400;
+            color: #e7c966;
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        button:hover {
+            color: #e7c966;
+            border-color: #DDDDDD;
+        }
+
+        button:active {
+            color: #e7c966;
+            border-color: #BBBBBB;
         }
     </style>
 </head>
 
 <body>
-
+    <h1>Service RH</h1>
     <h2>gestion du contrat de travail</h2>
 
     <div id="main" v-cloak>
         <form v-on:submit.prevent="onSubmit">
+            <div>Nom de l'employé :
+                <input v-model="nomEmploye" placeholder="Saisissez un nom">
+            </div>
             <div>Date de début :
                 <input type="date" v-model="dateDebut">
             </div>
@@ -70,59 +99,79 @@
                 <input type="date" v-model="dateFin">
             </div>
             <div>Durée de travail hebdomadaire :
-                <input type="number" v-model="dureeTravailHebdo" min="0" max="48">
+                <input type="number" v-model="dureeTravailHebdo" min="2" max="48">
             </div>
-            <button v-on:click="show">Valider</button>
+            <button v-on:click="seen = !seen">valider</button>
         </form>
-        <div v-if="isDisplay" class="resultat">Durée du contrat: {{ Duree() }}<br>
-            Congés cummulés: {{ Conges() }}<br>
-            <button v-on:click="hide">Cacher</button></div>
-
+        <div v-show="seen" class="resultat">
+            Nom de l'employé : {{ nomEmploye }}<br>
+            Durée du contrat : {{ Duree() }}<br>
+            Congés cummulés : {{ Conges() }}<br>
+            Equivalent Temps Plein : {{ calcETP() }}
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
 
-    <script>
-        moment().format('DD-MM-YYYY');
+        <script>
+            moment().format('DD-MM-YYYY');
 
-        var demo = new Vue({
-            el: "#main",
-            // initialisation des valeurs
-            data: {
-                isDisplay: false,
-                dureeTravailHebdo: "35",
-                dateDebut: "",
-                dateFin: "",
-                dureeContrat: 0,
+            var demo = new Vue({
+                el: "#main",
+                // initialisation des valeurs
+                data: {
+                    seen: false,
+                    dureeTravailHebdo: "35",
+                    dateDebut: "",
+                    dateFin: "",
+                    dureeContrat: 0,
+                    nomEmploye: '',
 
-            },
-            // Fonctions utilsées
-            methods: {
-
-                //affichage et masquage de la div resultat
-                show: function () {
-                    this.isDisplay = true;
                 },
-                hide: function () {
-                    this.isDisplay = false;
-                },
-                //calcul de la durée contrat avec moment.js
-                Duree: function () {
-                    const debutContrat = moment(this.dateDebut);
-                    const finContrat = moment(this.dateFin);
+                // Fonctions utilsées
+                methods: {
 
-                    var dureeContrat = finContrat.diff(debutContrat, "days");
-                    return dureeContrat + " jours soit " + (dureeContrat * 24) + " heures"
-;
-                },
-                Conges: function () {
-                    return conges = Math.ceil((this.dureeContrat / 28) * 2.08)+ " jours";
-                },
-            }
+                    //calcul de la durée contrat avec moment.js
+                    Duree: function () {
+                        const debutContrat = moment(this.dateDebut);
+                        const finContrat = moment(this.dateFin);
 
-        })
-    </script>
+                        var dureeContrat = finContrat.diff(debutContrat, "days");
+
+                        //condition si CDD > 1an et pour contrat de 1 journée 
+                        if (dureeContrat == 0) { dureeContrat = 1; }
+                        if (!isNaN(dureeContrat)) {
+                            if (dureeContrat > 365) {
+                                alert("Le contrat de travail ne peut être supérieur à 1 an");
+                            } else {
+                                this.dureeContrat = dureeContrat;
+                                return dureeContrat + " jours";
+                            }
+                        }
+                        return 0;
+                    },
+
+                    //calcul congé par tranche de 28 jours avec max 25 jours de congés
+                    Conges: function () {
+                        var conges = 0;
+
+                        if (this.dureeContrat > 28) {
+                            conges = Math.ceil(Math.floor(this.dureeContrat / 28) * 2.08);
+                            if (conges > 25) { conges = 25; }
+                        } else {
+                            return "temps de travail insuffisant"
+                        }
+                        return conges + " jours";
+                    },
+
+                    //calcul ETP en pourcentage
+                    calcETP: function () {
+                        return Math.round(this.dureeTravailHebdo / 35 * 100) + "%";
+                    },
+                }
+            })
+        </script>
 </body>
 
 </html>
