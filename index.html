@@ -99,8 +99,8 @@
                 <input type="date" v-model="dateFin">
             </div>
             <div>Durée de travail hebdomadaire :
-                <input type="number" v-model="dureeTravailHebdo" min="2" max="48">
-            </div>
+                <input type="number" size="3" v-model="dureeTravailHebdo" min="2" max="48">
+            </div>Y'
             <button v-on:click="seen = !seen">valider</button>
         </form>
         <div v-show="seen" class="resultat">
