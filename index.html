@@ -46,9 +46,6 @@
 
         }
 
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
 
         .resultat {
             margin-top: 50px;
@@ -99,7 +96,7 @@
                 <input type="date" v-model="dateFin">
             </div>
             <div>Durée de travail hebdomadaire :
-                <input type="number" v-model="dureeTravailHebdo" min="2" max="48">
+                <input type="number" v-model="dureeTravailHebdo" min="0" max="48" size="4">
             </div>
             <button v-on:click="seen = !seen">valider</button>
         </form>
